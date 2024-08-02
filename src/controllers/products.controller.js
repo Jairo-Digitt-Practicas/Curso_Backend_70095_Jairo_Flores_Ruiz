@@ -1,9 +1,10 @@
 /** @format */
 
 import { v4 as uuidv4 } from "uuid";
-import products from "../data/products.js";
 
-export const getProducts = (req, res) => {
+let products = [];
+
+export const getAllProducts = (req, res) => {
     res.json(products);
 };
 

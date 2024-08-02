@@ -1,9 +1,8 @@
 /** @format */
 
-// controllers/carts.controller.js
-
 import { v4 as uuidv4 } from "uuid";
-import carts from "../data/carts.js";
+
+let carts = [];
 
 export const createCart = (req, res) => {
     const newCart = {
