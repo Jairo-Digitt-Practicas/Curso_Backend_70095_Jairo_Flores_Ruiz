@@ -1,7 +1,7 @@
 /** @format */
 
 import request from "supertest";
-import app from "../../index.js";
+import app from "../index.js";
 
 describe("Carts API", () => {
     it("should create a new cart", async () => {

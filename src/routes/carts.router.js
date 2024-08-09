@@ -1,13 +1,13 @@
 /** @format */
 
-import express from "express";
+import { Router } from "express";
 import {
     createCart,
     getCartById,
     addProductToCart,
 } from "../controllers/carts.controller.js";
 
-const router = express.Router();
+const router = Router();
 
 router.post("/", createCart);
 router.get("/:cid", getCartById);

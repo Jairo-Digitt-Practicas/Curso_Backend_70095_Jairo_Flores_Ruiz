@@ -36,3 +36,20 @@ export const addProductToCart = (req, res) => {
     }
     res.status(201).json(cart);
 };
+
+// Additional functions to be used with WebSockets
+export const getCarts = () => carts;
+
+export const addCartProduct = (cid, pid) => {
+    const cart = carts.find((c) => c.id === cid);
+    if (!cart) {
+        return { error: "Carrito no encontrado" };
+    }
+    const productIndex = cart.products.findIndex((p) => p.product === pid);
+    if (productIndex !== -1) {
+        cart.products[productIndex].quantity += 1;
+    } else {
+        cart.products.push({ product: pid, quantity: 1 });
+    }
+    return cart;
+};

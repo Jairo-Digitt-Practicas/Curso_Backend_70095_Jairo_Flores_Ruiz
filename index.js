@@ -1,21 +1,87 @@
 /** @format */
 
 import express from "express";
+import { create } from "express-handlebars";
 import productsRouter from "./src/routes/products.router.js";
 import cartsRouter from "./src/routes/carts.router.js";
+import { Server } from "socket.io";
+import http from "http";
+import path from "path";
+import {
+    getAllProducts,
+    createProduct,
+    deleteProduct,
+} from "./src/controllers/products.controller.js";
+import {
+    getCartById,
+    addProductToCart,
+} from "./src/controllers/carts.controller.js";
 
 const app = express();
 const PORT = 8080;
 
+const hbs = create({
+    extname: ".handlebars",
+    defaultLayout: "main",
+    layoutsDir: path.join(process.cwd(), "views", "layouts"),
+    partialsDir: path.join(process.cwd(), "views", "partials"),
+});
+
+app.engine(".handlebars", hbs.engine);
+app.set("view engine", ".handlebars");
+app.set("views", path.join(process.cwd(), "views"));
+
 app.use(express.json());
+app.use(express.static(path.join(process.cwd(), "public")));
 
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 
-if (process.env.NODE_ENV !== "test") {
-    app.listen(PORT, () => {
-        console.log(`Server is running on port http://localhost:${PORT}`);
+app.get("/products", (req, res) => {
+    res.render("index", { title: "Products", products: getAllProducts() });
+});
+
+app.get("/realtimeproducts", (req, res) => {
+    res.render("realTimeProducts", {
+        title: "Real-Time Products",
+        products: getAllProducts(),
     });
-}
+});
+
+const server = http.createServer(app);
+const io = new Server(server);
+
+io.on("connection", (socket) => {
+    console.log("A user connected");
+    socket.emit("updateProducts", getAllProducts());
+    socket.emit("updateCarts", getCartById());
+
+    socket.on("newProduct", (product) => {
+        createProduct(product);
+        io.emit("updateProducts", getAllProducts());
+    });
+
+    socket.on("deleteProduct", (id) => {
+        deleteProduct(id);
+        io.emit("updateProducts", getAllProducts());
+    });
+
+    socket.on("addProductToCart", ({ cid, pid }) => {
+        const updatedCart = addProductToCart(cid, pid);
+        if (updatedCart.error) {
+            socket.emit("error", updatedCart.error);
+        } else {
+            io.emit("updateCarts", getCartById());
+        }
+    });
+
+    socket.on("disconnect", () => {
+        console.log("User disconnected");
+    });
+});
+
+server.listen(PORT, () => {
+    console.log(`Server is running on port http://localhost:${PORT}`);
+});
 
 export default app;

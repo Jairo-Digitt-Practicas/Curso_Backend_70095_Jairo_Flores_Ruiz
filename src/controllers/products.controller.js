@@ -4,19 +4,15 @@ import { v4 as uuidv4 } from "uuid";
 
 let products = [];
 
-export const getAllProducts = (req, res) => {
-    res.json(products);
+export const getAllProducts = () => {
+    return products;
 };
 
-export const getProductById = (req, res) => {
-    const product = products.find((p) => p.id === req.params.pid);
-    if (!product) {
-        return res.status(404).json({ error: "Producto no encontrado" });
-    }
-    res.json(product);
+export const getProductById = (id) => {
+    return products.find((p) => p.id === id);
 };
 
-export const createProduct = (req, res) => {
+export const createProduct = (productData) => {
     const {
         title,
         description,
@@ -26,7 +22,7 @@ export const createProduct = (req, res) => {
         stock,
         category,
         thumbnails,
-    } = req.body;
+    } = productData;
     const newProduct = {
         id: uuidv4(),
         title,
@@ -39,24 +35,25 @@ export const createProduct = (req, res) => {
         thumbnails,
     };
     products.push(newProduct);
-    res.status(201).json(newProduct);
+    return newProduct;
 };
 
-export const updateProduct = (req, res) => {
-    const productIndex = products.findIndex((p) => p.id === req.params.pid);
+export const updateProduct = (id, productData) => {
+    const productIndex = products.findIndex((p) => p.id === id);
     if (productIndex === -1) {
-        return res.status(404).json({ error: "Producto no encontrado" });
+        return null;
     }
     const updatedProduct = {
         ...products[productIndex],
-        ...req.body,
+        ...productData,
         id: products[productIndex].id,
     };
     products[productIndex] = updatedProduct;
-    res.json(updatedProduct);
+    return updatedProduct;
 };
 
-export const deleteProduct = (req, res) => {
-    products = products.filter((p) => p.id !== req.params.pid);
-    res.status(204).send();
+export const deleteProduct = (id) => {
+    const initialLength = products.length;
+    products = products.filter((p) => p.id !== id);
+    return products.length < initialLength;
 };
