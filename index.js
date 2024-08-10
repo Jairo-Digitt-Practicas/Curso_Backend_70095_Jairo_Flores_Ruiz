@@ -42,10 +42,35 @@ app.get("/products", (req, res) => {
 });
 
 app.get("/realtimeproducts", (req, res) => {
+    const products = getAllProducts();
     res.render("realTimeProducts", {
         title: "Real-Time Products",
-        products: getAllProducts(),
+        products,
     });
+});
+
+app.post("/realtimeproducts", (req, res) => {
+    const { title, description, code, price, status, stock, category } =
+        req.body;
+    if (!title || !description || !code || !price || !stock || !category) {
+        return res
+            .status(400)
+            .json({ error: "Datos del producto incompletos" });
+    }
+    try {
+        const newProduct = createProduct({
+            title,
+            description,
+            code,
+            price,
+            status,
+            stock,
+            category,
+        });
+        res.status(201).json(newProduct);
+    } catch (error) {
+        res.status(500).json({ error: "Error al crear producto" });
+    }
 });
 
 const server = http.createServer(app);
@@ -57,7 +82,7 @@ io.on("connection", (socket) => {
     socket.emit("updateCarts", getCartById());
 
     socket.on("newProduct", (product) => {
-        if (!product || !product.name || !product.price) {
+        if (!product || !product.title || !product.price) {
             socket.emit("error", "Datos del producto incompletos");
             return;
         }
@@ -85,6 +110,20 @@ io.on("connection", (socket) => {
         } else {
             io.emit("updateCarts", getCartById(cid));
         }
+    });
+
+    socket.on("updateProducts", (products) => {
+        console.log("Received updateProducts event with data:", products);
+        productList.innerHTML = "";
+        products.forEach((product) => {
+            const li = document.createElement("li");
+            li.textContent = `${product.title} - ${product.description}`;
+            const button = document.createElement("button");
+            button.textContent = "Eliminar";
+            button.dataset.id = product.id;
+            li.appendChild(button);
+            productList.appendChild(li);
+        });
     });
 
     socket.on("disconnect", () => {

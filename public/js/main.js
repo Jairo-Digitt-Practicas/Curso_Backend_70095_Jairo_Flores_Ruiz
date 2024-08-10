@@ -1,4 +1,5 @@
-// public/js/main.js
+/** @format */
+
 const socket = io();
 
 const form = document.getElementById("product-form");
@@ -14,7 +15,20 @@ form.addEventListener("submit", (e) => {
     const stock = document.getElementById("stock").value;
     const category = document.getElementById("category").value;
 
-    const product = { title, description, code, price, status, stock, category };
+    if (!title || !description || !code || !price || !stock || !category) {
+        alert("Todos los campos son requeridos.");
+        return;
+    }
+
+    const product = {
+        title,
+        description,
+        code,
+        price,
+        status,
+        stock,
+        category,
+    };
     socket.emit("newProduct", product);
 });
 

@@ -1,19 +1,36 @@
-<h1>Real-Time Products</h1>
-<form id="product-form">
-    <input type="text" id="title" placeholder="Title" required />
-    <input type="text" id="description" placeholder="Description" required />
-    <input type="text" id="code" placeholder="Code" required />
-    <input type="number" id="price" placeholder="Price" required />
-    <input type="checkbox" id="status" placeholder="Status" />
-    <input type="number" id="stock" placeholder="Stock" required />
-    <input type="text" id="category" placeholder="Category" required />
-    <button type="submit">Add Product</button>
-</form>
-<ul id="product-list">
-    {{#each products}}
-        <li>{{this.title}}
-            -
-            {{this.description}}
-            <button data-id="{{this.id}}">Eliminar</button></li>
-    {{/each}}
-</ul>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Real-Time Products</title>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/main.js" defer></script>
+    </head>
+    <body>
+        <h1>Real-Time Products</h1>
+        <form id="product-form">
+            <input type="text" id="title" placeholder="Title" required />
+            <input
+                type="text"
+                id="description"
+                placeholder="Description"
+                required
+            />
+            <input type="text" id="code" placeholder="Code" required />
+            <input type="number" id="price" placeholder="Price" required />
+            <input type="checkbox" id="status" />
+            <input type="number" id="stock" placeholder="Stock" required />
+            <input type="text" id="category" placeholder="Category" required />
+            <button type="submit">Add Product</button>
+        </form>
+        <ul id="product-list">
+            {{#each products}}
+                <li>{{this.title}}
+                    -
+                    {{this.description}}
+                    <button data-id="{{this.id}}">Eliminar</button>
+                </li>
+            {{/each}}
+        </ul>
+    </body>
+</html>
