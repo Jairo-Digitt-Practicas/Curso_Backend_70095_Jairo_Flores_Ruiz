@@ -57,13 +57,25 @@ io.on("connection", (socket) => {
     socket.emit("updateCarts", getCartById());
 
     socket.on("newProduct", (product) => {
-        createProduct(product);
-        io.emit("updateProducts", getAllProducts());
+        if (!product || !product.name || !product.price) {
+            socket.emit("error", "Datos del producto incompletos");
+            return;
+        }
+        try {
+            createProduct(product);
+            io.emit("updateProducts", getAllProducts());
+        } catch (error) {
+            socket.emit("error", "Error al crear producto");
+        }
     });
 
     socket.on("deleteProduct", (id) => {
-        deleteProduct(id);
-        io.emit("updateProducts", getAllProducts());
+        try {
+            deleteProduct(id);
+            io.emit("updateProducts", getAllProducts());
+        } catch (error) {
+            socket.emit("error", "Error al eliminar producto");
+        }
     });
 
     socket.on("addProductToCart", ({ cid, pid }) => {
@@ -71,7 +83,7 @@ io.on("connection", (socket) => {
         if (updatedCart.error) {
             socket.emit("error", updatedCart.error);
         } else {
-            io.emit("updateCarts", getCartById());
+            io.emit("updateCarts", getCartById(cid));
         }
     });
 
