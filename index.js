@@ -4,6 +4,7 @@ import express from "express";
 import { create } from "express-handlebars";
 import productsRouter from "./src/routes/products.router.js";
 import cartsRouter from "./src/routes/carts.router.js";
+import viewsRouter from "./src/routes/views.router.js";
 import { Server } from "socket.io";
 import http from "http";
 import path from "path";
@@ -36,6 +37,7 @@ app.use(express.static(path.join(process.cwd(), "public")));
 
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+app.use("/", viewsRouter);
 
 app.get("/products", (req, res) => {
     res.render("index", { title: "Products", products: getAllProducts() });
