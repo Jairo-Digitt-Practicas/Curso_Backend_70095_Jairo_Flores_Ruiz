@@ -1,59 +1,59 @@
 /** @format */
 
-import { v4 as uuidv4 } from "uuid";
+import Product from "../models/Product.js";
 
-let products = [];
-
-export const getAllProducts = () => {
-    return products;
-};
-
-export const getProductById = (id) => {
-    return products.find((p) => p.id === id);
-};
-
-export const createProduct = (productData) => {
-    const {
-        title,
-        description,
-        code,
-        price,
-        status,
-        stock,
-        category,
-        thumbnails,
-    } = productData;
-    const newProduct = {
-        id: uuidv4(),
-        title,
-        description,
-        code,
-        price,
-        status,
-        stock,
-        category,
-        thumbnails,
-    };
-    products.push(newProduct);
-    return newProduct;
-};
-
-export const updateProduct = (id, productData) => {
-    const productIndex = products.findIndex((p) => p.id === id);
-    if (productIndex === -1) {
-        return null;
+export const getAllProducts = async (filter = {}, options = {}) => {
+    try {
+        const products = await Product.paginate(filter, options);
+        return {
+            ...products,
+            page: products.page || 1,
+        };
+    } catch (error) {
+        throw new Error("Error al obtener productos: " + error.message);
     }
-    const updatedProduct = {
-        ...products[productIndex],
-        ...productData,
-        id: products[productIndex].id,
-    };
-    products[productIndex] = updatedProduct;
-    return updatedProduct;
 };
 
-export const deleteProduct = (id) => {
-    const initialLength = products.length;
-    products = products.filter((p) => p.id !== id);
-    return products.length < initialLength;
+export const getProductById = async (id) => {
+    try {
+        const product = await Product.findById(id);
+        return product ? product : null;
+    } catch (error) {
+        console.error("Error al obtener el producto:", error.message);
+        throw new Error("Error al obtener el producto: " + error.message);
+    }
+};
+
+export const createProduct = async (productData) => {
+    try {
+        const newProduct = new Product(productData);
+        return await newProduct.save();
+    } catch (error) {
+        throw new Error("Error al crear el producto: " + error.message);
+    }
+};
+
+export const updateProduct = async (id, productData) => {
+    try {
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id,
+            productData,
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+        return updatedProduct ? updatedProduct : null;
+    } catch (error) {
+        throw new Error("Error al actualizar el producto: " + error.message);
+    }
+};
+
+export const deleteProduct = async (id) => {
+    try {
+        const result = await Product.findByIdAndDelete(id);
+        return result ? true : false;
+    } catch (error) {
+        throw new Error("Error al eliminar el producto: " + error.message);
+    }
 };

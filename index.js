@@ -17,9 +17,15 @@ import {
     getCartById,
     addProductToCart,
 } from "./src/controllers/carts.controller.js";
+import mongoose from "mongoose";
+
+mongoose
+    .connect("mongodb://127.0.0.1:27017/mi_base_de_datos", {})
+    .then(() => console.log("Conexión exitosa a MongoDB"))
+    .catch((error) => console.error("Error al conectar a MongoDB", error));
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 const hbs = create({
     extname: ".handlebars",
