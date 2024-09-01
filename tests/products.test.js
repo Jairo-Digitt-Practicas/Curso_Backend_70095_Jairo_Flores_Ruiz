@@ -17,100 +17,112 @@ describe("Products API", () => {
         expect(response.body).toHaveProperty("nextLink");
         expect(response.body).toHaveProperty("payload");
     });
-});
 
-it("should get a product by id", async () => {
-    const newProduct = {
-        title: "Test Product",
-        description: "Description of test product",
-        code: "TP001",
-        price: 100,
-        status: true,
-        stock: 10,
-        category: "Test Category",
-        thumbnails: ["http://example.com/image1.jpg"],
-    };
+    it("should get a product by id", async () => {
+        const newProduct = {
+            title: "Test Product",
+            description: "Description of test product",
+            code: "TP001",
+            price: 100,
+            status: true,
+            stock: 10,
+            category: "Test Category",
+            thumbnails: ["http://example.com/image1.jpg"],
+        };
 
-    const postResponse = await request(app)
-        .post("/api/products")
-        .send(newProduct);
-    const productId = postResponse.body._id; // Asegúrate de usar `_id` o `id` consistentemente
+        const postResponse = await request(app)
+            .post("/api/products")
+            .send(newProduct);
+        const productId = postResponse.body._id; // Asegúrate de usar `_id` o `id` consistentemente
 
-    const response = await request(app).get(`/api/products/${productId}`);
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("_id", productId);
-});
+        console.log("Product created with ID:", productId); // Log del ID del producto
 
-it("should create a new product", async () => {
-    const newProduct = {
-        title: "New Test Product",
-        description: "New description",
-        code: "NT001",
-        price: 150,
-        status: true,
-        stock: 20,
-        category: "New Category",
-        thumbnails: ["http://example.com/newimage.jpg"],
-    };
+        const response = await request(app).get(`/api/products/${productId}`);
+        console.log("Get product response status:", response.status); // Log del estado de la respuesta
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty("_id", productId);
+    });
 
-    const response = await request(app).post("/api/products").send(newProduct);
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty("_id");
-    expect(response.body.title).toBe(newProduct.title);
-});
+    it("should create a new product", async () => {
+        const newProduct = {
+            title: "New Test Product",
+            description: "New description",
+            code: "NT001",
+            price: 150,
+            status: true,
+            stock: 20,
+            category: "New Category",
+            thumbnails: ["http://example.com/newimage.jpg"],
+        };
 
-it("should update a product", async () => {
-    const newProduct = {
-        title: "Product to Update",
-        description: "Update description",
-        code: "UP001",
-        price: 200,
-        status: true,
-        stock: 30,
-        category: "Update Category",
-        thumbnails: ["http://example.com/updateimage.jpg"],
-    };
+        const response = await request(app)
+            .post("/api/products")
+            .send(newProduct);
+        console.log("Create product response status:", response.status); // Log del estado de la respuesta
+        expect(response.status).toBe(201);
+        expect(response.body).toHaveProperty("_id");
+        expect(response.body.title).toBe(newProduct.title);
+    });
 
-    const postResponse = await request(app)
-        .post("/api/products")
-        .send(newProduct);
-    const productId = postResponse.body._id;
+    it("should update a product", async () => {
+        const newProduct = {
+            title: "Product to Update",
+            description: "Update description",
+            code: "UP001",
+            price: 200,
+            status: true,
+            stock: 30,
+            category: "Update Category",
+            thumbnails: ["http://example.com/updateimage.jpg"],
+        };
 
-    const updatedProduct = {
-        title: "Updated Product",
-        price: 250,
-    };
+        const postResponse = await request(app)
+            .post("/api/products")
+            .send(newProduct);
+        const productId = postResponse.body._id;
 
-    const putResponse = await request(app)
-        .put(`/api/products/${productId}`)
-        .send(updatedProduct);
-    expect(putResponse.status).toBe(200);
-    expect(putResponse.body.title).toBe(updatedProduct.title);
-    expect(putResponse.body.price).toBe(updatedProduct.price);
-});
+        console.log("Product created for update with ID:", productId); // Log del ID del producto
 
-it("should delete a product", async () => {
-    const newProduct = {
-        title: "Product to Delete",
-        description: "Delete description",
-        code: "DEL001",
-        price: 300,
-        status: true,
-        stock: 40,
-        category: "Delete Category",
-        thumbnails: ["http://example.com/deleteimage.jpg"],
-    };
+        const updatedProduct = {
+            title: "Updated Product",
+            price: 250,
+        };
 
-    const postResponse = await request(app)
-        .post("/api/products")
-        .send(newProduct);
-    const productId = postResponse.body._id;
+        const putResponse = await request(app)
+            .put(`/api/products/${productId}`)
+            .send(updatedProduct);
+        console.log("Update product response status:", putResponse.status); // Log del estado de la respuesta
+        expect(putResponse.status).toBe(200);
+        expect(putResponse.body.title).toBe(updatedProduct.title);
+        expect(putResponse.body.price).toBe(updatedProduct.price);
+    });
 
-    const deleteResponse = await request(app).delete(
-        `/api/products/${productId}`
-    );
-    expect(deleteResponse.status).toBe(204);
+    it("should delete a product", async () => {
+        const newProduct = {
+            title: "Product to Delete",
+            description: "Delete description",
+            code: "DEL001",
+            price: 300,
+            status: true,
+            stock: 40,
+            category: "Delete Category",
+            thumbnails: ["http://example.com/deleteimage.jpg"],
+        };
 
-    const getResponse = await request(app).get(`/api/products/${productId}`);
-    expect(getResponse.status).toBe(404);
+        const postResponse = await request(app)
+            .post("/api/products")
+            .send(newProduct);
+        const productId = postResponse.body._id;
+
+        const deleteResponse = await request(app).delete(
+            `/api/products/${productId}`
+        );
+        console.log("Delete product response status:", deleteResponse.status); // Log del estado de la respuesta
+        expect(deleteResponse.status).toBe(204);
+
+        const getResponse = await request(app).get(
+            `/api/products/${productId}`
+        );
+        expect(getResponse.status).toBe(404); // Verifica que el producto ya no existe
+    });
 });

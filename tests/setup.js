@@ -1,8 +1,8 @@
 /** @format */
 
-// tests/setup.js
 import mongoose from "mongoose";
-import app from "../index.js"; // Asegúrate de exportar tu aplicación Express desde 'src/app'
+import app from "../index.js";
+import Product from "../src/models/Product.js";
 
 beforeAll(async () => {
     await mongoose.connect("mongodb://localhost:27017/testdb", {
@@ -10,7 +10,6 @@ beforeAll(async () => {
         useUnifiedTopology: true,
     });
 
-    // Insertar un producto de prueba
     await Product.create({
         title: "Test Product",
         description: "Description for test product",

@@ -11,9 +11,21 @@ import {
 
 const router = express.Router();
 
+// Endpoint para obtener productos con paginación y filtros
 router.get("/", async (req, res) => {
     try {
         const { limit = 10, page = 1, sort, query } = req.query;
+
+        let filter = {};
+        if (query) {
+            // Buscar por categoría o estado (status)
+            filter = {
+                $or: [
+                    { category: new RegExp(query, "i") }, // Búsqueda por categoría (insensible a mayúsculas)
+                    { status: query.toLowerCase() === "true" }, // Búsqueda por estado (disponibilidad)
+                ],
+            };
+        }
 
         const options = {
             limit: parseInt(limit, 10),
@@ -26,15 +38,12 @@ router.get("/", async (req, res) => {
                     : {},
         };
 
-        const filter = query
-            ? { $or: [{ category: query }, { status: query }] }
-            : {};
-
         const products = await getAllProducts(filter, options);
 
         const response = {
             status: "success",
-            payload: products.docs,
+            payload: products.docs, // Asegúrate de que `products.docs` existe
+            totalPages: products.totalPages, // Asegúrate de incluir totalPages
             prevPage: products.hasPrevPage ? products.prevPage : null,
             nextPage: products.hasNextPage ? products.nextPage : null,
             page: products.page,
@@ -76,6 +85,7 @@ router.post("/", async (req, res) => {
     }
 });
 
+// Endpoint para actualizar un producto existente
 router.put("/:pid", async (req, res) => {
     try {
         const updatedProduct = await updateProduct(req.params.pid, req.body);
@@ -94,8 +104,9 @@ router.delete("/:pid", async (req, res) => {
         if (!result) {
             return res.status(404).json({ error: "Producto no encontrado" });
         }
-        res.status(204).send();
+        res.status(204).end(); // No content
     } catch (error) {
+        console.error("Error al eliminar el producto:", error);
         res.status(500).json({ error: "Error al eliminar el producto" });
     }
 });

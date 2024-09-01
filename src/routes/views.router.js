@@ -5,6 +5,7 @@ import {
     getAllProducts,
     getProductById,
 } from "../controllers/products.controller.js";
+import Product from "../models/Product.js"; // Asegúrate de que la ruta sea correcta
 
 const router = express.Router();
 
@@ -50,15 +51,17 @@ router.get("/products", async (req, res) => {
 
 router.get("/realtimeproducts", async (req, res) => {
     try {
-        const products = await getAllProducts();
-        res.render("realTimeProducts", {
-            title: "Real-Time Products",
-            products: products.docs,
-        });
+        const options = {
+            limit: 10, // Puedes cambiar esto si necesitas otro valor
+            page: 1, // Por ejemplo, siempre mostrar la primera página
+            sort: { createdAt: -1 }, // Ordenar por fecha de creación
+        };
+
+        const products = await getAllProducts({}, options);
+        res.render("realtimeproducts", { products: products.docs });
     } catch (error) {
-        res.status(500).json({
-            error: "Error al obtener los productos en tiempo real",
-        });
+        console.error("Error al cargar productos en tiempo real:", error);
+        res.status(500).send("Error al cargar productos en tiempo real");
     }
 });
 

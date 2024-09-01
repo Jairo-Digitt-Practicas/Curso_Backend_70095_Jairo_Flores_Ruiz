@@ -5,21 +5,24 @@ import Product from "../models/Product.js";
 export const getAllProducts = async (filter = {}, options = {}) => {
     try {
         const products = await Product.paginate(filter, options);
-        return {
-            ...products,
-            page: products.page || 1,
-        };
+        return products; // Retorna los productos al controlador que lo llame
     } catch (error) {
-        throw new Error("Error al obtener productos: " + error.message);
+        throw new Error("Error al obtener los productos: " + error.message);
     }
 };
 
 export const getProductById = async (id) => {
     try {
+        if (!id) {
+            throw new Error("ID del producto no proporcionado");
+        }
         const product = await Product.findById(id);
-        return product ? product : null;
+        if (!product) {
+            throw new Error("Producto no encontrado");
+        }
+        return product;
     } catch (error) {
-        console.error("Error al obtener el producto:", error.message);
+        console.error("Error al obtener el producto:", error);
         throw new Error("Error al obtener el producto: " + error.message);
     }
 };
@@ -27,14 +30,22 @@ export const getProductById = async (id) => {
 export const createProduct = async (productData) => {
     try {
         const newProduct = new Product(productData);
-        return await newProduct.save();
+        const savedProduct = await newProduct.save();
+        return savedProduct; // Debería devolver el producto creado
     } catch (error) {
-        throw new Error("Error al crear el producto: " + error.message);
+        throw new Error("Error al crear el producto");
     }
 };
 
 export const updateProduct = async (id, productData) => {
     try {
+        if (
+            productData.status !== undefined &&
+            typeof productData.status === "string"
+        ) {
+            productData.status = productData.status.toLowerCase() === "true";
+        }
+
         const updatedProduct = await Product.findByIdAndUpdate(
             id,
             productData,
@@ -49,10 +60,16 @@ export const updateProduct = async (id, productData) => {
     }
 };
 
-export const deleteProduct = async (id) => {
+export const deleteProduct = async (productId) => {
     try {
-        const result = await Product.findByIdAndDelete(id);
-        return result ? true : false;
+        const deletedProduct = await Product.findByIdAndDelete(productId);
+        if (!deletedProduct) {
+            return null; // Producto no encontrado
+        }
+
+        // Obtenemos la lista de productos actualizada después de la eliminación
+        const updatedProducts = await Product.find();
+        return updatedProducts; // Debemos retornar el array de productos
     } catch (error) {
         throw new Error("Error al eliminar el producto: " + error.message);
     }
