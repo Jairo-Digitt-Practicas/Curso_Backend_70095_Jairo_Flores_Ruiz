@@ -11,18 +11,16 @@ import {
 
 const router = express.Router();
 
-// Endpoint para obtener productos con paginación y filtros
 router.get("/", async (req, res) => {
     try {
         const { limit = 10, page = 1, sort, query } = req.query;
 
         let filter = {};
         if (query) {
-            // Buscar por categoría o estado (status)
             filter = {
                 $or: [
-                    { category: new RegExp(query, "i") }, // Búsqueda por categoría (insensible a mayúsculas)
-                    { status: query.toLowerCase() === "true" }, // Búsqueda por estado (disponibilidad)
+                    { category: new RegExp(query, "i") },
+                    { status: query.toLowerCase() === "true" },
                 ],
             };
         }
@@ -42,8 +40,8 @@ router.get("/", async (req, res) => {
 
         const response = {
             status: "success",
-            payload: products.docs, // Asegúrate de que `products.docs` existe
-            totalPages: products.totalPages, // Asegúrate de incluir totalPages
+            payload: products.docs,
+            totalPages: products.totalPages,
             prevPage: products.hasPrevPage ? products.prevPage : null,
             nextPage: products.hasNextPage ? products.nextPage : null,
             page: products.page,
@@ -85,7 +83,6 @@ router.post("/", async (req, res) => {
     }
 });
 
-// Endpoint para actualizar un producto existente
 router.put("/:pid", async (req, res) => {
     try {
         const updatedProduct = await updateProduct(req.params.pid, req.body);
@@ -104,7 +101,7 @@ router.delete("/:pid", async (req, res) => {
         if (!result) {
             return res.status(404).json({ error: "Producto no encontrado" });
         }
-        res.status(204).end(); // No content
+        res.status(204).end();
     } catch (error) {
         console.error("Error al eliminar el producto:", error);
         res.status(500).json({ error: "Error al eliminar el producto" });

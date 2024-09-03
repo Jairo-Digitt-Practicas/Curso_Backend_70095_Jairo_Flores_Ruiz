@@ -2,7 +2,7 @@
 
 import mongoose from "mongoose";
 import Cart from "../models/Cart.js";
-import Product from "../models/Product.js"; // Asegúrate de importar el modelo Product
+import Product from "../models/Product.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -20,9 +20,9 @@ export const createCart = async (cartData) => {
 };
 
 export const getCartById = async (cartId) => {
-    console.log("ID recibido:", cartId); // Añadir esta línea para depuración
+    console.log("ID recibido:", cartId);
     if (!isValidObjectId(cartId)) {
-        console.error("ID del carrito no es válido:", cartId); // Añadir esta línea para depuración
+        console.error("ID del carrito no es válido:", cartId);
         throw new Error("ID del carrito no es válido");
     }
     try {

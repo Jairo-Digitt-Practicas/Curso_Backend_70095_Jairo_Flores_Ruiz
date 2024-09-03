@@ -62,7 +62,7 @@ app.get("/products", async (req, res) => {
 
 app.get("/realtimeproducts", async (req, res) => {
     try {
-        const products = await getAllProducts(); // Asegúrate de que getAllProducts() devuelve un array
+        const products = await getAllProducts();
         res.render("index", { title: "Products", products });
     } catch (error) {
         res.status(500).json({ error: "Error al obtener los productos" });
@@ -92,11 +92,9 @@ app.post("/realtimeproducts", async (req, res) => {
         res.status(500).json({ error: "Error al crear producto" });
     }
 });
-// Crear el servidor HTTP y Socket.io
 const server = http.createServer(app);
 const io = new Server(server);
 
-// Manejar la conexión de Socket.io
 io.on("connection", (socket) => {
     console.log("Nuevo cliente conectado");
 
@@ -126,12 +124,11 @@ io.on("connection", (socket) => {
         }
     });
 
-    // Evento para manejar la paginación
     socket.on("paginate", async ({ page }) => {
         try {
             const options = {
                 limit: 10,
-                page: page || 1, // Si no se proporciona página, utiliza la página 1 por defecto
+                page: page || 1,
                 sort: { createdAt: -1 },
             };
             const products = await getAllProducts({}, options);
@@ -141,10 +138,10 @@ io.on("connection", (socket) => {
                 page,
                 ":",
                 products.docs
-            ); // Verifica los productos enviados
+            );
 
             socket.emit("updateProducts", {
-                products: products.docs, // Asegúrate de que `products.docs` es un array
+                products: products.docs,
                 currentPage: page,
                 hasNextPage: products.hasNextPage,
                 hasPrevPage: products.hasPrevPage,
@@ -157,19 +154,18 @@ io.on("connection", (socket) => {
         }
     });
 
-    // Evento para manejar la creación de un nuevo producto
     socket.on("newProduct", async (productData) => {
         try {
             const newProduct = await createProduct(productData);
 
             const options = {
                 limit: 10,
-                page: 1, // Mantenemos siempre en la primera página
-                sort: { createdAt: -1 }, // Ordenamos por la fecha de creación
+                page: 1,
+                sort: { createdAt: -1 },
             };
             const updatedProducts = await getAllProducts({}, options);
             socket.emit("updateProducts", {
-                products: updatedProducts.docs, // Usar products.docs si usas mongoose-paginate-v2
+                products: updatedProducts.docs,
                 currentPage: 1,
             });
         } catch (error) {
@@ -178,7 +174,6 @@ io.on("connection", (socket) => {
         }
     });
 
-    // Evento para manejar la eliminación de un producto
     socket.on("deleteProduct", async (productId) => {
         try {
             await deleteProduct(productId);
@@ -201,7 +196,6 @@ io.on("connection", (socket) => {
         }
     });
 
-    // Manejar la desconexión del cliente
     socket.on("disconnect", () => {
         console.log("Cliente desconectado");
     });
@@ -209,9 +203,9 @@ io.on("connection", (socket) => {
 
 hbs.handlebars.registerHelper("eq", function (a, b, options) {
     if (a === b) {
-        return options.fn(this); // Renderiza el bloque 'if' si a y b son iguales
+        return options.fn(this);
     } else {
-        return options.inverse(this); // Renderiza el bloque 'else' si a y b no son iguales
+        return options.inverse(this);
     }
 });
 

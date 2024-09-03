@@ -2,7 +2,6 @@
 
 const socket = io();
 
-// Manejo del formulario para agregar nuevos productos
 const form = document.getElementById("product-form");
 
 form.addEventListener("submit", (e) => {
@@ -20,9 +19,8 @@ form.addEventListener("submit", (e) => {
     form.reset();
 });
 
-// Manejo de la actualización de la lista de productos
 socket.on("updateProducts", (data) => {
-    console.log("Datos recibidos del servidor:", data); // Verifica qué datos se están recibiendo
+    console.log("Datos recibidos del servidor:", data);
 
     if (!data || !Array.isArray(data.products)) {
         console.error(
@@ -33,7 +31,7 @@ socket.on("updateProducts", (data) => {
 
     const products = data.products;
     const productList = document.getElementById("product-list");
-    productList.innerHTML = ""; // Limpia la lista actual
+    productList.innerHTML = "";
 
     products.forEach((product) => {
         const li = document.createElement("li");
@@ -46,12 +44,11 @@ socket.on("updateProducts", (data) => {
 
         button.addEventListener("click", function () {
             const productId = this.dataset.id;
-            console.log("Eliminando producto con ID:", productId); // Verifica el ID del producto
+            console.log("Eliminando producto con ID:", productId);
             socket.emit("deleteProduct", productId);
         });
     });
 
-    // Verificar si los botones existen antes de intentar modificar sus propiedades
     const prevButton = document.getElementById("prev-page");
     const nextButton = document.getElementById("next-page");
 
@@ -74,7 +71,6 @@ socket.on("updateProducts", (data) => {
     }
 });
 
-// Manejo del formulario de filtros
 document.getElementById("filter-form").addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -88,22 +84,19 @@ document.getElementById("filter-form").addEventListener("submit", function (e) {
         sort: sort || undefined,
     };
 
-    socket.emit("filterProducts", query); // Emite el evento con los filtros
+    socket.emit("filterProducts", query);
 });
 
-// Configuración del evento de clic para el botón "Siguiente"
 document.getElementById("next-page").addEventListener("click", function () {
-    const page = this.dataset.page; // Obtiene el número de la página desde el atributo data-page
-    console.log("Siguiente página:", page); // Verifica en la consola que el número de página es correcto
-    socket.emit("paginate", { page: page }); // Envía la solicitud de paginación al servidor
+    const page = this.dataset.page;
+    console.log("Siguiente página:", page);
+    socket.emit("paginate", { page: page });
 });
 
-// Configuración del evento de clic para el botón "Anterior"
 document.getElementById("prev-page").addEventListener("click", function () {
-    const page = this.dataset.page; // Obtiene el número de la página desde el atributo data-page
-    console.log("Página anterior:", page); // Verifica en la consola que el número de página es correcto
-    socket.emit("paginate", { page: page }); // Envía la solicitud de paginación al servidor
+    const page = this.dataset.page;
+    console.log("Página anterior:", page);
+    socket.emit("paginate", { page: page });
 });
 
-// Cargar la primera página al inicio
 socket.emit("paginate", { page: 1 });

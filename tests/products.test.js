@@ -33,12 +33,12 @@ describe("Products API", () => {
         const postResponse = await request(app)
             .post("/api/products")
             .send(newProduct);
-        const productId = postResponse.body._id; // Asegúrate de usar `_id` o `id` consistentemente
+        const productId = postResponse.body._id;
 
-        console.log("Product created with ID:", productId); // Log del ID del producto
+        console.log("Product created with ID:", productId);
 
         const response = await request(app).get(`/api/products/${productId}`);
-        console.log("Get product response status:", response.status); // Log del estado de la respuesta
+        console.log("Get product response status:", response.status);
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("_id", productId);
     });
@@ -58,7 +58,7 @@ describe("Products API", () => {
         const response = await request(app)
             .post("/api/products")
             .send(newProduct);
-        console.log("Create product response status:", response.status); // Log del estado de la respuesta
+        console.log("Create product response status:", response.status);
         expect(response.status).toBe(201);
         expect(response.body).toHaveProperty("_id");
         expect(response.body.title).toBe(newProduct.title);
@@ -81,7 +81,7 @@ describe("Products API", () => {
             .send(newProduct);
         const productId = postResponse.body._id;
 
-        console.log("Product created for update with ID:", productId); // Log del ID del producto
+        console.log("Product created for update with ID:", productId);
 
         const updatedProduct = {
             title: "Updated Product",
@@ -91,7 +91,7 @@ describe("Products API", () => {
         const putResponse = await request(app)
             .put(`/api/products/${productId}`)
             .send(updatedProduct);
-        console.log("Update product response status:", putResponse.status); // Log del estado de la respuesta
+        console.log("Update product response status:", putResponse.status);
         expect(putResponse.status).toBe(200);
         expect(putResponse.body.title).toBe(updatedProduct.title);
         expect(putResponse.body.price).toBe(updatedProduct.price);
@@ -117,12 +117,12 @@ describe("Products API", () => {
         const deleteResponse = await request(app).delete(
             `/api/products/${productId}`
         );
-        console.log("Delete product response status:", deleteResponse.status); // Log del estado de la respuesta
+        console.log("Delete product response status:", deleteResponse.status);
         expect(deleteResponse.status).toBe(204);
 
         const getResponse = await request(app).get(
             `/api/products/${productId}`
         );
-        expect(getResponse.status).toBe(404); // Verifica que el producto ya no existe
+        expect(getResponse.status).toBe(404);
     });
 });

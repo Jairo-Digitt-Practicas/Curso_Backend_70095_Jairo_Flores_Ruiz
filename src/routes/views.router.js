@@ -5,7 +5,7 @@ import {
     getAllProducts,
     getProductById,
 } from "../controllers/products.controller.js";
-import Product from "../models/Product.js"; // Asegúrate de que la ruta sea correcta
+import Product from "../models/Product.js";
 
 const router = express.Router();
 
@@ -52,9 +52,9 @@ router.get("/products", async (req, res) => {
 router.get("/realtimeproducts", async (req, res) => {
     try {
         const options = {
-            limit: 10, // Puedes cambiar esto si necesitas otro valor
-            page: 1, // Por ejemplo, siempre mostrar la primera página
-            sort: { createdAt: -1 }, // Ordenar por fecha de creación
+            limit: 10,
+            page: 1,
+            sort: { createdAt: -1 },
         };
 
         const products = await getAllProducts({}, options);

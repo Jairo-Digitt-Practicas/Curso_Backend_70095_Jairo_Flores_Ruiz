@@ -5,7 +5,7 @@ import Product from "../models/Product.js";
 export const getAllProducts = async (filter = {}, options = {}) => {
     try {
         const products = await Product.paginate(filter, options);
-        return products; // Retorna los productos al controlador que lo llame
+        return products;
     } catch (error) {
         throw new Error("Error al obtener los productos: " + error.message);
     }
@@ -31,7 +31,7 @@ export const createProduct = async (productData) => {
     try {
         const newProduct = new Product(productData);
         const savedProduct = await newProduct.save();
-        return savedProduct; // Debería devolver el producto creado
+        return savedProduct;
     } catch (error) {
         throw new Error("Error al crear el producto");
     }
@@ -64,12 +64,11 @@ export const deleteProduct = async (productId) => {
     try {
         const deletedProduct = await Product.findByIdAndDelete(productId);
         if (!deletedProduct) {
-            return null; // Producto no encontrado
+            return null;
         }
 
-        // Obtenemos la lista de productos actualizada después de la eliminación
         const updatedProducts = await Product.find();
-        return updatedProducts; // Debemos retornar el array de productos
+        return updatedProducts;
     } catch (error) {
         throw new Error("Error al eliminar el producto: " + error.message);
     }

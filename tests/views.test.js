@@ -1,7 +1,7 @@
 /** @format */
 
 import request from "supertest";
-import app from "../index.js"; // Ajusta la ruta según tu estructura de proyecto
+import app from "../index.js";
 import mongoose from "mongoose";
 import Product from "../src/models/Product.js";
 
@@ -13,7 +13,6 @@ beforeAll(async () => {
         useUnifiedTopology: true,
     });
 
-    // Crear un producto de prueba
     const product = await Product.create({
         title: "Test Product",
         description: "Description for test product",
@@ -35,19 +34,16 @@ afterAll(async () => {
 
 describe("Product API", () => {
     it("should delete a product", async () => {
-        // Verificar que el producto existe antes de eliminarlo
         const getProductResponse = await request(app).get(
             `/api/products/${validProductId}`
         );
         expect(getProductResponse.status).toBe(200);
 
-        // Eliminar el producto
         const deleteResponse = await request(app).delete(
             `/api/products/${validProductId}`
         );
-        expect(deleteResponse.status).toBe(204); // No content
+        expect(deleteResponse.status).toBe(204);
 
-        // Intentar obtener el producto eliminado debería devolver 404
         const secondGetProductResponse = await request(app).get(
             `/api/products/${validProductId}`
         );
