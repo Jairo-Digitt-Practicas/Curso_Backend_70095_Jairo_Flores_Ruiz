@@ -14,11 +14,6 @@ import {
     createProduct,
     deleteProduct,
 } from "./src/controllers/products.controller.js";
-import {
-    getCartById,
-    addProductToCart,
-} from "./src/controllers/carts.controller.js";
-import mongoose from "mongoose";
 
 const app = express();
 
@@ -28,6 +23,8 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
+
+console.log("skjfnds");
 
 const hbs = create({
     extname: ".handlebars",
@@ -208,11 +205,6 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         console.log("Cliente desconectado");
     });
-});
-
-// Iniciar el servidor
-server.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
 hbs.handlebars.registerHelper("eq", function (a, b, options) {
