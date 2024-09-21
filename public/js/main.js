@@ -72,9 +72,12 @@ socket.on("updateProducts", (data) => {
 });
 
 document.getElementById("filter-form").addEventListener("submit", function (e) {
-    e.preventDefault();
+    e.preventDefault(); // No se necesita pasar "e" aquí
 
-    const category = document.getElementById("category").value;
+    const category = document.getElementById("categoryFilter").value; // Cambio del ID
+
+    console.log("Filtrando por categoría:", category);
+
     const availability = document.getElementById("availability").value;
     const sort = document.getElementById("sort").value;
 

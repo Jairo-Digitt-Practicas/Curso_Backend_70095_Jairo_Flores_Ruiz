@@ -12,10 +12,10 @@
         "express": "^4.17.1",
         "express-handlebars": "^6.0.0",
         "mongodb": "^6.8.0",
-        "mongoose": "^8.5.4",
+        "mongoose": "^8.6.3",
         "mongoose-paginate-v2": "^1.8.3",
         "path-browserify": "^1.0.1",
-        "socket.io": "^4.7.5",
+        "socket.io": "^4.8.0",
         "socket.io-client": "^4.7.5",
         "uuid": "^8.3.2"
     },

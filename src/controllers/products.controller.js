@@ -28,6 +28,10 @@ export const getProductById = async (id) => {
 };
 
 export const createProduct = async (productData) => {
+    const { title, price } = productData;
+    if (!title || !price) {
+        throw new Error("Faltan datos obligatorios");
+    }
     try {
         const newProduct = new Product(productData);
         const savedProduct = await newProduct.save();

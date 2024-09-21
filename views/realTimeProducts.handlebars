@@ -1,4 +1,4 @@
-<html lang="en">
+<html lang="en"></html>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -23,14 +23,41 @@
                 <input type="checkbox" id="status" />
             </label>
             <input type="number" id="stock" placeholder="Stock" required />
-            <input type="text" id="category" placeholder="Categoría" required />
+            <select id="category" placeholder="Categoría" required>
+                <option value="">Seleccionar Categoría</option>
+                <option value="electronics">Electrónica</option>
+                <option value="fashion">Moda</option>
+                <option value="home">Hogar</option>
+                <option value="toys">Juguetes</option>
+                <option value="sports">Deportes</option>
+                <option value="automotive">Automóviles</option>
+                <option value="books">Libros</option>
+                <option value="beauty">Belleza</option>
+                <option value="health">Salud</option>
+                <option value="garden">Jardín</option>
+                <option value="others">Otros</option>
+            </select>
             <button type="submit">Agregar Producto</button>
         </form>
 
         <form id="filter-form">
-            <input type="text" id="category" placeholder="Categoría" />
+            <select id="categoryFilter" placeholder="Categoría">
+                <option value="">Seleccionar Categoría</option>
+                <option value="electronics">Electrónica</option>
+                <option value="fashion">Moda</option>
+                <option value="home">Hogar</option>
+                <option value="toys">Juguetes</option>
+                <option value="sports">Deportes</option>
+                <option value="automotive">Automóviles</option>
+                <option value="books">Libros</option>
+                <option value="beauty">Belleza</option>
+                <option value="health">Salud</option>
+                <option value="garden">Jardín</option>
+                <option value="others">Otros</option>
+            </select>
+
             <select id="availability">
-                <option value="">Disponibilidad</option>
+                <option value=""></option>
                 <option value="true">Disponible</option>
                 <option value="false">No Disponible</option>
             </select>
@@ -61,6 +88,8 @@
             <button id="prev-page" disabled>Anterior</button>
             <button id="next-page" disabled>Siguiente</button>
         </div>
-
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/main.js"></script>
+        <script src="/js/pagination.js"></script>
     </body>
 </html>

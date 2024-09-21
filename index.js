@@ -17,14 +17,14 @@ import {
 
 const app = express();
 
+const server = http.createServer(app);
+const io = new Server(server);
 connectDB();
 
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
-
-console.log("skjfnds");
 
 const hbs = create({
     extname: ".handlebars",
@@ -48,8 +48,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/", viewsRouter);
-
-app.use("/carts", cartsRouter);
 
 app.get("/products", async (req, res) => {
     try {
@@ -92,8 +90,6 @@ app.post("/realtimeproducts", async (req, res) => {
         res.status(500).json({ error: "Error al crear producto" });
     }
 });
-const server = http.createServer(app);
-const io = new Server(server);
 
 io.on("connection", (socket) => {
     console.log("Nuevo cliente conectado");
@@ -133,13 +129,6 @@ io.on("connection", (socket) => {
             };
             const products = await getAllProducts({}, options);
 
-            console.log(
-                "Productos enviados al cliente para la página",
-                page,
-                ":",
-                products.docs
-            );
-
             socket.emit("updateProducts", {
                 products: products.docs,
                 currentPage: page,
@@ -169,7 +158,6 @@ io.on("connection", (socket) => {
                 currentPage: 1,
             });
         } catch (error) {
-            console.error("Error al agregar nuevo producto:", error.message);
             socket.emit("error", "Error al agregar nuevo producto");
         }
     });
@@ -189,24 +177,13 @@ io.on("connection", (socket) => {
                 currentPage: 1,
             });
         } catch (error) {
-            socket.emit(
-                "error",
-                "Error al eliminar producto: " + error.message
-            );
+            socket.emit("error", "Error al eliminar producto");
         }
     });
 
     socket.on("disconnect", () => {
         console.log("Cliente desconectado");
     });
-});
-
-hbs.handlebars.registerHelper("eq", function (a, b, options) {
-    if (a === b) {
-        return options.fn(this);
-    } else {
-        return options.inverse(this);
-    }
 });
 
 export default app;
