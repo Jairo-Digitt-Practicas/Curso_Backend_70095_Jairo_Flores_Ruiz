@@ -7,7 +7,15 @@ describe("Products API", () => {
     it("should list all products", async () => {
         const response = await request(app).get("/api/products");
         expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(Array);
+        expect(response.body).toHaveProperty("status", "success");
+        expect(response.body).toHaveProperty("prevPage");
+        expect(response.body).toHaveProperty("nextPage");
+        expect(response.body).toHaveProperty("page");
+        expect(response.body).toHaveProperty("hasPrevPage");
+        expect(response.body).toHaveProperty("hasNextPage");
+        expect(response.body).toHaveProperty("prevLink");
+        expect(response.body).toHaveProperty("nextLink");
+        expect(response.body).toHaveProperty("payload");
     });
 
     it("should get a product by id", async () => {
@@ -25,11 +33,14 @@ describe("Products API", () => {
         const postResponse = await request(app)
             .post("/api/products")
             .send(newProduct);
-        const productId = postResponse.body.id;
+        const productId = postResponse.body._id;
+
+        console.log("Product created with ID:", productId);
 
         const response = await request(app).get(`/api/products/${productId}`);
+        console.log("Get product response status:", response.status);
         expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty("id", productId);
+        expect(response.body).toHaveProperty("_id", productId);
     });
 
     it("should create a new product", async () => {
@@ -47,8 +58,9 @@ describe("Products API", () => {
         const response = await request(app)
             .post("/api/products")
             .send(newProduct);
+        console.log("Create product response status:", response.status);
         expect(response.status).toBe(201);
-        expect(response.body).toHaveProperty("id");
+        expect(response.body).toHaveProperty("_id");
         expect(response.body.title).toBe(newProduct.title);
     });
 
@@ -67,7 +79,9 @@ describe("Products API", () => {
         const postResponse = await request(app)
             .post("/api/products")
             .send(newProduct);
-        const productId = postResponse.body.id;
+        const productId = postResponse.body._id;
+
+        console.log("Product created for update with ID:", productId);
 
         const updatedProduct = {
             title: "Updated Product",
@@ -77,6 +91,7 @@ describe("Products API", () => {
         const putResponse = await request(app)
             .put(`/api/products/${productId}`)
             .send(updatedProduct);
+        console.log("Update product response status:", putResponse.status);
         expect(putResponse.status).toBe(200);
         expect(putResponse.body.title).toBe(updatedProduct.title);
         expect(putResponse.body.price).toBe(updatedProduct.price);
@@ -97,11 +112,12 @@ describe("Products API", () => {
         const postResponse = await request(app)
             .post("/api/products")
             .send(newProduct);
-        const productId = postResponse.body.id;
+        const productId = postResponse.body._id;
 
         const deleteResponse = await request(app).delete(
             `/api/products/${productId}`
         );
+        console.log("Delete product response status:", deleteResponse.status);
         expect(deleteResponse.status).toBe(204);
 
         const getResponse = await request(app).get(

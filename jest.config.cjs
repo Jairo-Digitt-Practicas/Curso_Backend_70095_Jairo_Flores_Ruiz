@@ -1,10 +1,12 @@
 /** @format */
-
+// jest.config.cjs
 module.exports = {
-    transform: {
-        "^.+\\.jsx?$": "babel-jest",
-    },
     testEnvironment: "node",
-    extensionsToTreatAsEsm: [".js"],
-    moduleFileExtensions: ["js", "json", "node"],
+    transform: {
+        "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
+    },
+    moduleFileExtensions: ["js", "jsx", "ts", "tsx", "json", "node"],
+    moduleNameMapper: {
+        "^path$": require.resolve("path-browserify"),
+    },
 };
